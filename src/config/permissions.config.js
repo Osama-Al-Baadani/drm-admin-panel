@@ -1,0 +1,112 @@
+/**
+ * Permissions Configuration
+ * تعريف الصلاحيات لكل دور
+ */
+
+import ROLES from './roles.config';
+
+export const PERMISSIONS = {
+  // Users Management
+  USERS_VIEW: 'users.view',
+  USERS_CREATE: 'users.create',
+  USERS_UPDATE: 'users.update',
+  USERS_DELETE: 'users.delete',
+  USERS_SUSPEND: 'users.suspend',
+  USERS_IMPORT: 'users.import',
+  USERS_EXPORT: 'users.export',
+  
+  // Documents Management
+  DOCUMENTS_VIEW: 'documents.view',
+  DOCUMENTS_CREATE: 'documents.create',
+  DOCUMENTS_UPDATE: 'documents.update',
+  DOCUMENTS_DELETE: 'documents.delete',
+  DOCUMENTS_UPLOAD: 'documents.upload',
+  
+  // Publications Management
+  PUBLICATIONS_VIEW: 'publications.view',
+  PUBLICATIONS_CREATE: 'publications.create',
+  PUBLICATIONS_UPDATE: 'publications.update',
+  PUBLICATIONS_DELETE: 'publications.delete',
+  
+  // Access Control
+  ACCESS_MANAGE: 'access.manage',
+  ACCESS_VIEW: 'access.view',
+  
+  // Devices Management
+  DEVICES_VIEW: 'devices.view',
+  DEVICES_REVOKE: 'devices.revoke',
+  
+  // Emails Management
+  EMAILS_VIEW: 'emails.view',
+  EMAILS_SEND: 'emails.send',
+  EMAILS_RESEND: 'emails.resend',
+  
+  // Sub-Admins Management
+  ADMINS_VIEW: 'admins.view',
+  ADMINS_CREATE: 'admins.create',
+  ADMINS_UPDATE: 'admins.update',
+  ADMINS_DELETE: 'admins.delete',
+  
+  // Reports & Logs
+  REPORTS_VIEW: 'reports.view',
+  REPORTS_EXPORT: 'reports.export',
+  LOGS_VIEW: 'logs.view',
+  
+  // Settings
+  SETTINGS_VIEW: 'settings.view',
+  SETTINGS_UPDATE: 'settings.update',
+};
+
+// Role Permissions Mapping
+export const ROLE_PERMISSIONS = {
+  [ROLES.SUPER_ADMIN]: Object.values(PERMISSIONS), // All permissions
+  
+  [ROLES.PUBLISHER]: [
+    PERMISSIONS.USERS_VIEW,
+    PERMISSIONS.USERS_CREATE,
+    PERMISSIONS.USERS_UPDATE,
+    PERMISSIONS.USERS_SUSPEND,
+    PERMISSIONS.USERS_IMPORT,
+    PERMISSIONS.USERS_EXPORT,
+    PERMISSIONS.DOCUMENTS_VIEW,
+    PERMISSIONS.DOCUMENTS_CREATE,
+    PERMISSIONS.DOCUMENTS_UPDATE,
+    PERMISSIONS.DOCUMENTS_DELETE,
+    PERMISSIONS.DOCUMENTS_UPLOAD,
+    PERMISSIONS.PUBLICATIONS_VIEW,
+    PERMISSIONS.PUBLICATIONS_CREATE,
+    PERMISSIONS.PUBLICATIONS_UPDATE,
+    PERMISSIONS.PUBLICATIONS_DELETE,
+    PERMISSIONS.ACCESS_MANAGE,
+    PERMISSIONS.ACCESS_VIEW,
+    PERMISSIONS.DEVICES_VIEW,
+    PERMISSIONS.DEVICES_REVOKE,
+    PERMISSIONS.EMAILS_VIEW,
+    PERMISSIONS.EMAILS_SEND,
+    PERMISSIONS.EMAILS_RESEND,
+    PERMISSIONS.REPORTS_VIEW,
+    PERMISSIONS.REPORTS_EXPORT,
+    PERMISSIONS.LOGS_VIEW,
+  ],
+  
+  [ROLES.SUB_ADMIN]: [
+    PERMISSIONS.USERS_VIEW,
+    PERMISSIONS.USERS_UPDATE,
+    PERMISSIONS.DOCUMENTS_VIEW,
+    PERMISSIONS.DOCUMENTS_UPDATE,
+    PERMISSIONS.PUBLICATIONS_VIEW,
+    PERMISSIONS.ACCESS_VIEW,
+    PERMISSIONS.DEVICES_VIEW,
+    PERMISSIONS.REPORTS_VIEW,
+  ],
+  
+  [ROLES.MODERATOR]: [
+    PERMISSIONS.USERS_VIEW,
+    PERMISSIONS.DOCUMENTS_VIEW,
+    PERMISSIONS.PUBLICATIONS_VIEW,
+    PERMISSIONS.REPORTS_VIEW,
+    PERMISSIONS.LOGS_VIEW,
+  ],
+};
+
+export default PERMISSIONS;
