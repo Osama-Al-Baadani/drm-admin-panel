@@ -1,0 +1,44 @@
+:root {
+  /* Colors */
+  --color-primary: #3b82f6;
+  --color-primary-dark: #1d4ed8;
+  --color-danger: #ef4444;
+  --color-success: #22c55e;
+  --color-warning: #f59e0b;
+  --color-info: #06b6d4;
+
+  /* Sidebar */
+  --sidebar-width: 260px;
+  --sidebar-bg: #1e293b;
+  --sidebar-text: #cbd5e1;
+  --sidebar-active-bg: #3b82f6;
+
+  /* Header */
+  --header-height: 64px;
+  --header-bg: #ffffff;
+  --header-border: #e2e8f0;
+
+  /* Card */
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --card-radius: 0.75rem;
+  --card-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+  /* Typography */
+  --font-primary: 'Inter', 'Noto Sans Arabic', sans-serif;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+
+  /* Transitions */
+  --transition-base: all 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --header-bg: #1e293b;
+  --header-border: #334155;
+  --card-bg: #1e293b;
+  --card-border: #334155;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+}

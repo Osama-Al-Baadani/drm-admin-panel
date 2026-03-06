@@ -1,115 +1,29 @@
-import { format } from 'date-fns'
-import { DATE_FORMATS } from '../constants'
+export const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-/**
- * Format date for display
- */
-export const formatDate = (date, formatStr = DATE_FORMATS.DISPLAY) => {
-  if (!date) return '-'
-  try {
-    return format(new Date(date), formatStr)
-  } catch (error) {
-    console.error('Error formatting date:', error)
-    return '-'
-  }
-}
+export const truncate = (str, max = 50) =>
+  str && str.length > max ? `${str.substring(0, max)}...` : str;
 
-/**
- * Format file size (bytes to human readable)
- */
-export const formatFileSize = (bytes) => {
-  if (!bytes || bytes === 0) return '0 Bytes'
-  
-  const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
-  
-  return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i]
-}
+export const capitalize = (str) =>
+  str ? str.charAt(0).toUpperCase() + str.slice(1).toLowerCase() : '';
 
-/**
- * Truncate text with ellipsis
- */
-export const truncate = (text, maxLength = 50) => {
-  if (!text) return ''
-  if (text.length <= maxLength) return text
-  return text.substring(0, maxLength) + '...'
-}
+export const getInitials = (name) =>
+  name ? name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase() : '??';
 
-/**
- * Debounce function
- */
-export const debounce = (func, wait = 300) => {
-  let timeout
-  return function executedFunction(...args) {
-    const later = () => {
-      clearTimeout(timeout)
-      func(...args)
-    }
-    clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-  }
-}
+export const removeEmpty = (obj) =>
+  Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== '' && v !== null && v !== undefined));
 
-/**
- * Generate random ID
- */
-export const generateId = () => {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36)
-}
+export const groupBy = (arr, key) =>
+  arr.reduce((acc, item) => {
+    const group = item[key];
+    if (!acc[group]) acc[group] = [];
+    acc[group].push(item);
+    return acc;
+  }, {});
 
-/**
- * Check if user has specific role
- */
-export const hasRole = (user, role) => {
-  if (!user || !user.role) return false
-  return user.role === role
-}
-
-/**
- * Get user status badge color
- */
-export const getStatusColor = (status) => {
-  const colors = {
-    active: 'bg-success-500',
-    inactive: 'bg-gray-500',
-    suspended: 'bg-danger-500',
-    expired: 'bg-warning-500',
-  }
-  return colors[status] || 'bg-gray-500'
-}
-
-/**
- * Validate email format
- */
-export const isValidEmail = (email) => {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return regex.test(email)
-}
-
-/**
- * Copy text to clipboard
- */
-export const copyToClipboard = async (text) => {
-  try {
-    await navigator.clipboard.writeText(text)
-    return true
-  } catch (error) {
-    console.error('Failed to copy:', error)
-    return false
-  }
-}
-
-/**
- * Download file from blob
- */
-export const downloadFile = (blob, filename) => {
-  const url = window.URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = filename
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  window.URL.revokeObjectURL(url)
-}
+export const debounce = (fn, delay = 300) => {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+};
