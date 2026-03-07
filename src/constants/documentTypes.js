@@ -1,44 +1,27 @@
-// =============================================
-// Document Types Constants
-// أنواع الملفات المدعومة في النظام
-// =============================================
-
 export const DOCUMENT_TYPES = {
   VIDEO: 'video',
   PDF: 'pdf',
-  WORD: 'word',
+  AUDIO: 'audio',
+  EBOOK: 'ebook'
 };
 
 export const DOCUMENT_TYPE_LABELS = {
-  [DOCUMENT_TYPES.VIDEO]: 'Video',
+  [DOCUMENT_TYPES.VIDEO]: 'فيديو',
   [DOCUMENT_TYPES.PDF]: 'PDF',
-  [DOCUMENT_TYPES.WORD]: 'Word',
+  [DOCUMENT_TYPES.AUDIO]: 'صوت',
+  [DOCUMENT_TYPES.EBOOK]: 'كتاب إلكتروني'
 };
 
 export const DOCUMENT_TYPE_ICONS = {
-  [DOCUMENT_TYPES.VIDEO]: '🎬',
+  [DOCUMENT_TYPES.VIDEO]: '🎥',
   [DOCUMENT_TYPES.PDF]: '📄',
-  [DOCUMENT_TYPES.WORD]: '📝',
+  [DOCUMENT_TYPES.AUDIO]: '🎵',
+  [DOCUMENT_TYPES.EBOOK]: '📚'
 };
 
-export const DOCUMENT_TYPE_COLORS = {
-  [DOCUMENT_TYPES.VIDEO]: 'blue',
-  [DOCUMENT_TYPES.PDF]: 'red',
-  [DOCUMENT_TYPES.WORD]: 'indigo',
+export const DOCUMENT_MIME_TYPES = {
+  [DOCUMENT_TYPES.VIDEO]: ['video/mp4', 'video/webm', 'video/ogg'],
+  [DOCUMENT_TYPES.PDF]: ['application/pdf'],
+  [DOCUMENT_TYPES.AUDIO]: ['audio/mpeg', 'audio/wav', 'audio/ogg'],
+  [DOCUMENT_TYPES.EBOOK]: ['application/epub+zip', 'application/x-mobipocket-ebook']
 };
-
-export const EXPIRY_TYPES = {
-  DATE: 'date',         // تاريخ انتهاء محدد
-  DAYS: 'days',         // عدد أيام من أول مشاهدة
-  VIEWS: 'views',       // عدد مشاهدات
-  NEVER: 'never',       // لا ينتهي
-};
-
-export const EXPIRY_TYPE_LABELS = {
-  [EXPIRY_TYPES.DATE]: 'Fixed Date',
-  [EXPIRY_TYPES.DAYS]: 'Days After First Open',
-  [EXPIRY_TYPES.VIEWS]: 'Number of Views',
-  [EXPIRY_TYPES.NEVER]: 'Never Expires',
-};
-
-export default DOCUMENT_TYPES;

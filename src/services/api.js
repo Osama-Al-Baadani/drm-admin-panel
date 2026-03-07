@@ -1,46 +1,51 @@
-// =============================================
-// Axios API Instance + Interceptors
-// إعداد Axios مع التوكن وإعادة التوجيه
-// =============================================
-
 import axios from 'axios';
-import { APP_CONFIG } from '../config/app.config';
+import { appConfig } from '../config/app.config';
 
 const api = axios.create({
-  baseURL: APP_CONFIG.API_BASE_URL,
-  timeout: APP_CONFIG.API_TIMEOUT,
+  baseURL: appConfig.apiUrl,
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
-    Accept: 'application/json',
-  },
+    'Accept': 'application/json'
+  }
 });
 
-// Request Interceptor — إضافة التوكن لكل طلب
+// Request interceptor
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('drm_token');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-// Response Interceptor — معالجة الأخطاء العامة
+// Response interceptor
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response.data;
+  },
   (error) => {
-    const status = error.response?.status;
-    if (status === 401) {
-      // Token expired — clear and redirect
-      localStorage.removeItem('drm_token');
-      localStorage.removeItem('drm_user');
-      window.location.href = '/login';
+    if (error.response) {
+      // Handle 401 Unauthorized
+      if (error.response.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
+      
+      // Handle 403 Forbidden
+      if (error.response.status === 403) {
+        console.error('Access denied');
+      }
+      
+      return Promise.reject(error.response.data);
     }
-    if (status === 403) {
-      console.error('Access Forbidden: You do not have permission.');
-    }
+    
     return Promise.reject(error);
   }
 );

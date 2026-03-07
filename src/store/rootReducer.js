@@ -1,7 +1,3 @@
-// =============================================
-// Root Reducer — دمج كل الـ Slices
-// =============================================
-
 import { combineReducers } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/store/authSlice';
 import usersReducer from '../features/users/store/usersSlice';
@@ -16,7 +12,7 @@ const rootReducer = combineReducers({
   documents: documentsReducer,
   publications: publicationsReducer,
   access: accessReducer,
-  devices: devicesReducer,
+  devices: devicesReducer
 });
 
 export default rootReducer;

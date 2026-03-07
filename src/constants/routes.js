@@ -1,55 +1,46 @@
-// =============================================
-// Application Routes Constants
-// كل مسارات التطبيق كثوابت
-// =============================================
-
 export const ROUTES = {
   // Auth
   LOGIN: '/login',
   FORGOT_PASSWORD: '/forgot-password',
-  RESET_PASSWORD: '/reset-password',
-
+  
   // Dashboard
   DASHBOARD: '/',
-
+  
   // Users
   USERS: '/users',
-  USERS_CREATE: '/users/create',
+  USERS_LIST: '/users',
   USER_DETAIL: '/users/:id',
-  USER_EDIT: '/users/:id/edit',
-
+  USER_CREATE: '/users/create',
+  
   // Documents
   DOCUMENTS: '/documents',
+  DOCUMENTS_LIST: '/documents',
   DOCUMENT_DETAIL: '/documents/:id',
-
+  
   // Publications
   PUBLICATIONS: '/publications',
-  PUBLICATIONS_CREATE: '/publications/create',
+  PUBLICATIONS_LIST: '/publications',
+  PUBLICATION_CREATE: '/publications/create',
   PUBLICATION_EDIT: '/publications/:id/edit',
-
+  
   // Access Control
   ACCESS_CONTROL: '/access-control',
-
+  
   // Devices
   DEVICES: '/devices',
-
+  
   // Emails
   EMAILS: '/emails',
-
-  // Sub-Admins
+  
+  // Sub Admins
   SUB_ADMINS: '/sub-admins',
-  SUB_ADMINS_CREATE: '/sub-admins/create',
-
+  SUB_ADMIN_CREATE: '/sub-admins/create',
+  
   // Reports
   REPORTS: '/reports',
-  REPORTS_VIEW_LOGS: '/reports/view-logs',
-  REPORTS_ADMIN_LOGS: '/reports/admin-logs',
-
+  VIEW_LOGS: '/reports/view-logs',
+  ADMIN_LOGS: '/reports/admin-logs',
+  
   // Settings
-  SETTINGS: '/settings',
-
-  // Not Found
-  NOT_FOUND: '*',
+  SETTINGS: '/settings'
 };
-
-export default ROUTES;

@@ -1,42 +1,33 @@
-// =============================================
-// Watermark Text Builder
-// توليد نص العلامة المائية الديناميكي
-// =============================================
-
-/**
- * Build dynamic watermark text by replacing variables
- * Supported variables: [UserName], [Email], [Date], [Time], [Company], [IP]
- * @param {string} template  e.g. "[UserName] - [Email] - [Date]"
- * @param {Object} userData
- * @returns {string}
- */
-export const buildWatermarkText = (template, userData = {}) => {
-  if (!template) return '';
-  const now = new Date();
-  const replacements = {
-    '[UserName]': userData.name || '',
-    '[Email]': userData.email || '',
-    '[Date]': now.toLocaleDateString('en-US'),
-    '[Time]': now.toLocaleTimeString('en-US'),
-    '[Company]': userData.company || '',
-    '[IP]': userData.ip || '',
-    '[UserId]': userData.id || '',
-  };
-  let result = template;
-  Object.entries(replacements).forEach(([key, value]) => {
-    result = result.replaceAll(key, value);
-  });
-  return result;
+export const WATERMARK_VARIABLES = {
+  USER_NAME: '[UserName]',
+  EMAIL: '[Email]',
+  DATE: '[Date]',
+  TIME: '[Time]',
+  COMPANY: '[Company]',
+  USER_ID: '[UserID]',
+  DEVICE_ID: '[DeviceID]'
 };
 
-export const WATERMARK_VARIABLES = [
-  { key: '[UserName]', description: 'Full name of the user' },
-  { key: '[Email]', description: 'Email address of the user' },
-  { key: '[Date]', description: 'Current date' },
-  { key: '[Time]', description: 'Current time' },
-  { key: '[Company]', description: 'Company name' },
-  { key: '[IP]', description: 'User IP address' },
-  { key: '[UserId]', description: 'User ID' },
-];
+export const buildWatermarkText = (template, userData) => {
+  if (!template) return '';
+  
+  const now = new Date();
+  const date = now.toLocaleDateString('ar-SA');
+  const time = now.toLocaleTimeString('ar-SA');
+  
+  let text = template;
+  
+  text = text.replace(WATERMARK_VARIABLES.USER_NAME, userData.name || '');
+  text = text.replace(WATERMARK_VARIABLES.EMAIL, userData.email || '');
+  text = text.replace(WATERMARK_VARIABLES.DATE, date);
+  text = text.replace(WATERMARK_VARIABLES.TIME, time);
+  text = text.replace(WATERMARK_VARIABLES.COMPANY, userData.company || '');
+  text = text.replace(WATERMARK_VARIABLES.USER_ID, userData.id || '');
+  text = text.replace(WATERMARK_VARIABLES.DEVICE_ID, userData.deviceId || '');
+  
+  return text;
+};
 
-export default buildWatermarkText;
+export const getWatermarkVariables = () => {
+  return Object.values(WATERMARK_VARIABLES);
+};

@@ -1,15 +1,10 @@
-// =============================================
-// Device Types Constants
-// أنواع الأجهزة المدعومة
-// =============================================
-
 export const DEVICE_TYPES = {
   WINDOWS: 'windows',
   MAC: 'mac',
   LINUX: 'linux',
   IOS: 'ios',
   ANDROID: 'android',
-  UNKNOWN: 'unknown',
+  WEB: 'web'
 };
 
 export const DEVICE_TYPE_LABELS = {
@@ -18,21 +13,14 @@ export const DEVICE_TYPE_LABELS = {
   [DEVICE_TYPES.LINUX]: 'Linux',
   [DEVICE_TYPES.IOS]: 'iOS',
   [DEVICE_TYPES.ANDROID]: 'Android',
-  [DEVICE_TYPES.UNKNOWN]: 'Unknown',
+  [DEVICE_TYPES.WEB]: 'متصفح'
 };
 
 export const DEVICE_TYPE_ICONS = {
-  [DEVICE_TYPES.WINDOWS]: '🖥️',
+  [DEVICE_TYPES.WINDOWS]: '🪟',
   [DEVICE_TYPES.MAC]: '🍎',
   [DEVICE_TYPES.LINUX]: '🐧',
   [DEVICE_TYPES.IOS]: '📱',
   [DEVICE_TYPES.ANDROID]: '📱',
-  [DEVICE_TYPES.UNKNOWN]: '💻',
+  [DEVICE_TYPES.WEB]: '🌐'
 };
-
-export const DEVICE_STATUS = {
-  ACTIVE: 'active',
-  REVOKED: 'revoked',
-};
-
-export default DEVICE_TYPES;

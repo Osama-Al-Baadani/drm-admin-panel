@@ -1,52 +1,46 @@
-// =============================================
-// Date Formatting Utilities
-// أدوات تنسيق التواريخ
-// =============================================
+import { appConfig } from '../config/app.config';
 
-import { format, formatDistanceToNow, parseISO, isValid } from 'date-fns';
-
-/**
- * Format a date string to readable format
- * @param {string|Date} date
- * @param {string} pattern
- * @returns {string}
- */
-export const formatDate = (date, pattern = 'yyyy-MM-dd') => {
-  if (!date) return '-';
-  try {
-    const parsed = typeof date === 'string' ? parseISO(date) : date;
-    if (!isValid(parsed)) return '-';
-    return format(parsed, pattern);
-  } catch {
-    return '-';
-  }
+export const formatDate = (date, format = appConfig.dateFormat) => {
+  if (!date) return '';
+  
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return '';
+  
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  const seconds = String(d.getSeconds()).padStart(2, '0');
+  
+  return format
+    .replace('YYYY', year)
+    .replace('MM', month)
+    .replace('DD', day)
+    .replace('HH', hours)
+    .replace('mm', minutes)
+    .replace('ss', seconds);
 };
 
-export const formatDateTime = (date) =>
-  formatDate(date, 'yyyy-MM-dd HH:mm:ss');
-
-export const formatDateAr = (date) =>
-  formatDate(date, 'dd/MM/yyyy');
-
-export const timeAgo = (date) => {
-  if (!date) return '-';
-  try {
-    const parsed = typeof date === 'string' ? parseISO(date) : date;
-    return formatDistanceToNow(parsed, { addSuffix: true });
-  } catch {
-    return '-';
-  }
+export const formatDateTime = (date) => {
+  return formatDate(date, 'YYYY-MM-DD HH:mm:ss');
 };
 
-export const isExpired = (date) => {
-  if (!date) return false;
-  return new Date(date) < new Date();
+export const formatRelativeTime = (date) => {
+  if (!date) return '';
+  
+  const d = new Date(date);
+  const now = new Date();
+  const diffMs = now - d;
+  const diffSecs = Math.floor(diffMs / 1000);
+  const diffMins = Math.floor(diffSecs / 60);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  
+  if (diffSecs < 60) return 'الآن';
+  if (diffMins < 60) return `منذ ${diffMins} دقيقة`;
+  if (diffHours < 24) return `منذ ${diffHours} ساعة`;
+  if (diffDays < 7) return `منذ ${diffDays} يوم`;
+  
+  return formatDate(date);
 };
-
-export const daysUntilExpiry = (date) => {
-  if (!date) return null;
-  const diff = new Date(date) - new Date();
-  return Math.ceil(diff / (1000 * 60 * 60 * 24));
-};
-
-export default formatDate;
