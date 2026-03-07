@@ -1,24 +1,65 @@
-import api from '@/services/api';
+import api from '../../../services/api';
 
 const userService = {
-  async getAll(params)        { const { data } = await api.get('/users', { params });    return data; },
-  async getById(id)           { const { data } = await api.get(`/users/${id}`);          return data; },
-  async create(payload)       { const { data } = await api.post('/users', payload);       return data; },
-  async update(id, payload)   { const { data } = await api.put(`/users/${id}`, payload); return data; },
-  async delete(id)            { await api.delete(`/users/${id}`);                        return true; },
-  async suspend(id)           { const { data } = await api.post(`/users/${id}/suspend`); return data; },
-  async activate(id)          { const { data } = await api.post(`/users/${id}/activate`);return data; },
-  async bulkAction(action, ids) { const { data } = await api.post('/users/bulk', { action, ids }); return data; },
-  async importCSV(file) {
-    const form = new FormData(); form.append('file', file);
-    const { data } = await api.post('/users/import', form, { headers: { 'Content-Type': 'multipart/form-data' } });
-    return data;
+  getAll: async (params = {}) => {
+    return await api.get('/users', { params });
   },
-  async exportCSV(params)        { const { data } = await api.get('/users/export', { params, responseType: 'blob' }); return data; },
-  async resendLicense(id)        { const { data } = await api.post(`/users/${id}/resend-license`); return data; },
-  async resendLicenseBulk(ids)   { const { data } = await api.post('/users/resend-license-bulk', { ids }); return data; },
-  async getUserDevices(id)       { const { data } = await api.get(`/users/${id}/devices`); return data; },
-  async revokeDevice(deviceId)   { const { data } = await api.delete(`/devices/${deviceId}`); return data; },
+
+  getById: async (id) => {
+    return await api.get(`/users/${id}`);
+  },
+
+  create: async (data) => {
+    return await api.post('/users', data);
+  },
+
+  update: async (id, data) => {
+    return await api.put(`/users/${id}`, data);
+  },
+
+  delete: async (id) => {
+    return await api.delete(`/users/${id}`);
+  },
+
+  suspend: async (id) => {
+    return await api.post(`/users/${id}/suspend`);
+  },
+
+  activate: async (id) => {
+    return await api.post(`/users/${id}/activate`);
+  },
+
+  bulkAction: async (action, ids) => {
+    return await api.post('/users/bulk', { action, ids });
+  },
+
+  importCSV: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return await api.post('/users/import', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+  },
+
+  exportCSV: async (filters = {}) => {
+    return await api.get('/users/export', { params: filters, responseType: 'blob' });
+  },
+
+  resendLicense: async (userId) => {
+    return await api.post(`/users/${userId}/resend-license`);
+  },
+
+  resendLicenseBulk: async (userIds) => {
+    return await api.post('/users/resend-license-bulk', { user_ids: userIds });
+  },
+
+  getUserDevices: async (userId) => {
+    return await api.get(`/users/${userId}/devices`);
+  },
+
+  revokeDevice: async (userId, deviceId) => {
+    return await api.delete(`/users/${userId}/devices/${deviceId}`);
+  }
 };
 
 export default userService;

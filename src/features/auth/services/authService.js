@@ -1,28 +1,35 @@
-import api from '@/services/api';
-import appConfig from '@/config/app.config';
+import api from '../../../services/api';
 
 const authService = {
-  async login(credentials) {
-    const { data } = await api.post('/auth/login', credentials);
-    localStorage.setItem(appConfig.tokenKey, data.token);
-    return data;
+  login: async (email, password) => {
+    const response = await api.post('/auth/login', { email, password });
+    if (response.token) {
+      localStorage.setItem('token', response.token);
+      localStorage.setItem('user', JSON.stringify(response.user));
+    }
+    return response;
   },
-  async logout() {
-    await api.post('/auth/logout').catch(() => {});
-    localStorage.removeItem(appConfig.tokenKey);
+
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
   },
-  async getMe() {
-    const { data } = await api.get('/auth/me');
-    return data;
+
+  getMe: async () => {
+    return await api.get('/auth/me');
   },
-  async forgotPassword(email) {
-    const { data } = await api.post('/auth/forgot-password', { email });
-    return data;
+
+  refreshToken: async () => {
+    return await api.post('/auth/refresh');
   },
-  async resetPassword(payload) {
-    const { data } = await api.post('/auth/reset-password', payload);
-    return data;
+
+  forgotPassword: async (email) => {
+    return await api.post('/auth/forgot-password', { email });
   },
+
+  resetPassword: async (token, password) => {
+    return await api.post('/auth/reset-password', { token, password });
+  }
 };
 
 export default authService;

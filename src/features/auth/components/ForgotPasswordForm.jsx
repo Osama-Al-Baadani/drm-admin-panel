@@ -1,33 +1,40 @@
 import { useState } from 'react';
-import Input  from '@/components/common/Input';
-import Button from '@/components/common/Button';
-import authService from '../services/authService';
-import useToast from '@/hooks/useToast';
+import Input from '../../../components/common/Input';
+import Button from '../../../components/common/Button';
+import { validateEmail } from '../../../utils/validateForm';
 
-export default function ForgotPasswordForm() {
-  const [email, setEmail]   = useState('');
-  const [loading, setLoading] = useState(false);
-  const toast = useToast();
+const ForgotPasswordForm = ({ onSubmit, loading }) => {
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      await authService.forgotPassword(email);
-      toast.success('Reset link sent to your email');
-    } catch { toast.error('Failed to send reset link'); }
-    finally { setLoading(false); }
+    if (!validateEmail(email)) {
+      setError('البريد الإلكتروني غير صحيح');
+      return;
+    }
+    onSubmit({ email });
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2 className="text-2xl font-bold text-slate-800 mb-2">Forgot Password</h2>
-      <p className="text-slate-500 text-sm mb-6">أدخل بريدك الإلكتروني لإعادة الضبط</p>
-      <Input label="Email" name="email" type="email" value={email}
-             onChange={(e) => setEmail(e.target.value)} required />
-      <Button type="submit" loading={loading} className="w-full mt-2 justify-center">
-        Send Reset Link
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input
+        label="البريد الإلكتروني"
+        type="email"
+        value={email}
+        onChange={(e) => {
+          setEmail(e.target.value);
+          setError('');
+        }}
+        error={error}
+        disabled={loading}
+      />
+
+      <Button type="submit" fullWidth disabled={loading}>
+        {loading ? 'جاري الإرسال...' : 'إرسال رابط إعادة التعيين'}
       </Button>
     </form>
   );
-}
+};
+
+export default ForgotPasswordForm;

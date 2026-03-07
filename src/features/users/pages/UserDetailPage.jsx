@@ -1,51 +1,65 @@
-import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import PageHeader from '../../../components/layout/PageHeader';
+import Tabs from '../../../components/common/Tabs';
+import UserDevicesList from '../components/UserDevicesList';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUserById } from '../store/usersSlice';
-import PageHeader      from '@/components/layout/PageHeader';
-import Tabs            from '@/components/common/Tabs';
-import UserDevicesList from '../components/UserDevicesList';
-import UserForm        from '../components/UserForm';
-import LoadingSpinner  from '@/components/common/LoadingSpinner';
-import userService     from '../services/userService';
-import useToast        from '@/hooks/useToast';
 
-const TABS = [
-  { key: 'details',  label: 'Details',  icon: '👤' },
-  { key: 'devices',  label: 'Devices',  icon: '💻' },
-];
-
-export default function UserDetailPage() {
+const UserDetailPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const toast    = useToast();
-  const { selectedUser: user, loading } = useSelector((s) => s.users);
-  const [tab,     setTab]    = useState('details');
-  const [saving,  setSaving] = useState(false);
+  const { selectedUser, loading } = useSelector(state => state.users);
 
-  useEffect(() => { dispatch(fetchUserById(id)); }, [id]);
+  useEffect(() => {
+    dispatch(fetchUserById(id));
+  }, [dispatch, id]);
 
-  const handleSave = async (data) => {
-    setSaving(true);
-    try {
-      await userService.update(id, data);
-      toast.success('User updated successfully');
-    } catch { toast.error('Update failed'); }
-    finally { setSaving(false); }
-  };
+  if (loading || !selectedUser) return <div>جاري التحميل...</div>;
 
-  if (loading) return <LoadingSpinner className="mt-20" />;
+  const tabs = [
+    {
+      id: 'info',
+      label: 'المعلومات الأساسية',
+      content: (
+        <div className="bg-white rounded-lg shadow p-6">
+          <dl className="grid grid-cols-2 gap-4">
+            <div>
+              <dt className="text-sm font-medium text-gray-500">الاسم</dt>
+              <dd className="mt-1 text-sm text-gray-900">{selectedUser.name}</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-gray-500">البريد</dt>
+              <dd className="mt-1 text-sm text-gray-900">{selectedUser.email}</dd>
+            </div>
+            <div>
+              <dt className="text-sm font-medium text-gray-500">الحالة</dt>
+              <dd className="mt-1">{selectedUser.status}</dd>
+            </div>
+          </dl>
+        </div>
+      )
+    },
+    {
+      id: 'devices',
+      label: 'الأجهزة',
+      content: <UserDevicesList userId={id} />
+    }
+  ];
 
   return (
     <div>
-      <PageHeader title={user?.name || 'User Detail'}
-                  breadcrumbs={['Dashboard', 'Users', user?.name || id]} />
-      <Tabs tabs={TABS} activeTab={tab} onChange={setTab} />
-      <div className="card">
-        {tab === 'details' && <UserForm initialData={user} onSubmit={handleSave} loading={saving} />}
-        {tab === 'devices' && <UserDevicesList userId={id} />}
-      </div>
+      <PageHeader
+        title={`تفاصيل المستخدم: ${selectedUser.name}`}
+        breadcrumbs={[
+          { label: 'المستخدمون', path: '/users' },
+          { label: selectedUser.name }
+        ]}
+      />
+
+      <Tabs tabs={tabs} />
     </div>
   );
-}
+};
+
+export default UserDetailPage;

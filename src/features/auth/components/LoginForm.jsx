@@ -1,41 +1,63 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { loginThunk } from '../store/authSlice';
-import Input  from '@/components/common/Input';
-import Button from '@/components/common/Button';
-import ROUTES from '@/constants/routes';
+import Input from '../../../components/common/Input';
+import Button from '../../../components/common/Button';
+import { validateEmail, validateRequired } from '../../../utils/validateForm';
 
-export default function LoginForm() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { loading, error } = useSelector((s) => s.auth);
-  const [form, setForm] = useState({ email: '', password: '' });
+const LoginForm = ({ onSubmit, loading }) => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({});
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (field, value) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: null }));
+    }
+  };
 
-  const handleSubmit = async (e) => {
+  const validate = () => {
+    const newErrors = {};
+    if (!validateEmail(formData.email)) {
+      newErrors.email = 'البريد الإلكتروني غير صحيح';
+    }
+    if (!validateRequired(formData.password)) {
+      newErrors.password = 'كلمة المرور مطلوبة';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const result = await dispatch(loginThunk(form));
-    if (loginThunk.fulfilled.match(result)) navigate(ROUTES.DASHBOARD);
+    if (validate()) {
+      onSubmit(formData);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2 className="text-2xl font-bold text-slate-800 mb-2">Sign In</h2>
-      <p className="text-slate-500 text-sm mb-6">ادخل بيانات حسابك</p>
-      {error && (
-        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-600 text-sm">{error}</p>
-        </div>
-      )}
-      <Input label="Email" name="email" type="email" value={form.email}
-             onChange={handleChange} required placeholder="admin@example.com" />
-      <Input label="Password" name="password" type="password" value={form.password}
-             onChange={handleChange} required placeholder="••••••••" />
-      <Button type="submit" loading={loading} className="w-full mt-2 justify-center">
-        Sign In
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <Input
+        label="البريد الإلكتروني"
+        type="email"
+        value={formData.email}
+        onChange={(e) => handleChange('email', e.target.value)}
+        error={errors.email}
+        disabled={loading}
+      />
+
+      <Input
+        label="كلمة المرور"
+        type="password"
+        value={formData.password}
+        onChange={(e) => handleChange('password', e.target.value)}
+        error={errors.password}
+        disabled={loading}
+      />
+
+      <Button type="submit" fullWidth disabled={loading}>
+        {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
       </Button>
     </form>
   );
-}
+};
+
+export default LoginForm;

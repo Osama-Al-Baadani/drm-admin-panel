@@ -1,39 +1,57 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import authService from '../services/authService';
 
-export const loginThunk = createAsyncThunk('auth/login', async (creds, { rejectWithValue }) => {
-  try   { return await authService.login(creds); }
-  catch (e) { return rejectWithValue(e.response?.data?.message || 'Login failed'); }
+export const login = createAsyncThunk('auth/login', async ({ email, password }) => {
+  return await authService.login(email, password);
 });
 
-export const getMeThunk = createAsyncThunk('auth/getMe', async (_, { rejectWithValue }) => {
-  try   { return await authService.getMe(); }
-  catch (e) { return rejectWithValue(e.response?.data?.message); }
+export const getMe = createAsyncThunk('auth/getMe', async () => {
+  return await authService.getMe();
 });
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: { user: null, token: localStorage.getItem('drm_admin_token'), role: null, loading: false, error: null },
+  initialState: {
+    user: JSON.parse(localStorage.getItem('user')) || null,
+    token: localStorage.getItem('token') || null,
+    role: null,
+    loading: false,
+    error: null
+  },
   reducers: {
     logout: (state) => {
-      state.user = null; state.token = null; state.role = null;
-      localStorage.removeItem('drm_admin_token');
+      authService.logout();
+      state.user = null;
+      state.token = null;
+      state.role = null;
     },
-    clearError: (state) => { state.error = null; },
+    setUser: (state, action) => {
+      state.user = action.payload;
+      state.role = action.payload?.role;
+    }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(loginThunk.pending,   (s) => { s.loading = true;  s.error = null; })
-      .addCase(loginThunk.fulfilled, (s, { payload }) => {
-        s.loading = false; s.token = payload.token;
-        s.user = payload.user; s.role = payload.user?.role;
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
-      .addCase(loginThunk.rejected,  (s, { payload }) => { s.loading = false; s.error = payload; })
-      .addCase(getMeThunk.fulfilled, (s, { payload }) => {
-        s.user = payload; s.role = payload?.role;
+      .addCase(login.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.role = action.payload.user.role;
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(getMe.fulfilled, (state, action) => {
+        state.user = action.payload.data;
+        state.role = action.payload.data.role;
       });
-  },
+  }
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, setUser } = authSlice.actions;
 export default authSlice.reducer;

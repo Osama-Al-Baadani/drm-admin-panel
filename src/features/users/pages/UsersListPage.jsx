@@ -1,64 +1,81 @@
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import PageHeader from '../../../components/layout/PageHeader';
+import DataTable from '../../../components/tables/DataTable';
+import UserFilters from '../components/UserFilters';
+import BulkActions from '../../../components/tables/BulkActions';
+import TableActions from '../../../components/tables/TableActions';
+import Badge from '../../../components/common/Badge';
+import { ROUTES } from '../../../constants/routes';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchUsers } from '../store/usersSlice';
-import PageHeader      from '@/components/layout/PageHeader';
-import UserTable       from '../components/UserTable';
-import UserFilters     from '../components/UserFilters';
-import UserBulkActions from '../components/UserBulkActions';
-import ImportUsersModal from '../components/ImportUsersModal';
-import Button          from '@/components/common/Button';
-import ExportButton    from '@/components/tables/ExportButton';
-import ROUTES          from '@/constants/routes';
 
-export default function UsersListPage() {
-  const dispatch = useDispatch();
+const UsersListPage = () => {
   const navigate = useNavigate();
-  const { list, loading, pagination } = useSelector((s) => s.users);
-  const [selected, setSelected]   = useState([]);
-  const [filters,  setFilters]    = useState({ search: '', status: '' });
-  const [showImport, setShowImport] = useState(false);
+  const dispatch = useDispatch();
+  const { list, loading, pagination } = useSelector(state => state.users);
+  const [selectedUsers, setSelectedUsers] = useState([]);
 
-  useEffect(() => { dispatch(fetchUsers(filters)); }, [filters]);
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
 
-  const toggleSelect = (id) =>
-    setSelected((prev) => prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]);
+  const columns = [
+    { key: 'id', label: 'ID', sortable: true },
+    { key: 'name', label: 'الاسم', sortable: true },
+    { key: 'email', label: 'البريد', sortable: true },
+    {
+      key: 'status',
+      label: 'الحالة',
+      render: (value) => <Badge status={value} />
+    },
+    { key: 'devices_count', label: 'الأجهزة' },
+    {
+      key: 'actions',
+      label: 'الإجراءات',
+      render: (_, row) => (
+        <TableActions
+          actions={[
+            { label: 'عرض', onClick: (data) => navigate(`/users/${data.id}`) },
+            { label: 'تعديل', onClick: (data) => navigate(`/users/${data.id}/edit`), variant: 'outline' }
+          ]}
+          data={row}
+        />
+      )
+    }
+  ];
+
+  const bulkActions = [
+    { label: 'تعليق', icon: '🚫', onClick: (ids) => console.log('Suspend', ids), variant: 'outline' },
+    { label: 'حذف', icon: '🗑️', onClick: (ids) => console.log('Delete', ids), variant: 'danger' }
+  ];
 
   return (
     <div>
       <PageHeader
-        title="Users" subtitle={`${pagination.total} total users`}
-        breadcrumbs={['Dashboard', 'Users']}
-        actions={<>
-          <ExportButton onClick={() => {}} />
-          <Button icon="⬆️" variant="outline" size="sm" onClick={() => setShowImport(true)}>Import</Button>
-          <Button icon="➕" onClick={() => navigate(ROUTES.USERS_CREATE)}>Add User</Button>
-        </>}
+        title="إدارة المستخدمين"
+        action={{
+          label: 'إضافة مستخدم',
+          icon: '➕',
+          onClick: () => navigate(ROUTES.USER_CREATE)
+        }}
       />
-      <UserFilters
-        onSearch={(q) => setFilters({ ...filters, search: q })}
-        onFilter={(k, v) => setFilters({ ...filters, [k]: v })}
-        filterValues={filters}
+
+      <UserFilters />
+      <BulkActions
+        selectedItems={selectedUsers}
+        actions={bulkActions}
+        onClearSelection={() => setSelectedUsers([])}
       />
-      <UserBulkActions
-        selectedCount={selected.length}
-        onClear={() => setSelected([])}
-        onActivate={() => {}}
-        onSuspend={() => {}}
-        onDelete={() => {}}
-        onResend={() => {}}
+
+      <DataTable
+        columns={columns}
+        data={list}
+        loading={loading}
+        pagination={pagination}
       />
-      <div className="card">
-        <UserTable
-          users={list} loading={loading}
-          selectedRows={selected} onSelect={toggleSelect}
-          onEdit={(u) => navigate(`/users/${u.id}`)}
-          onDelete={(id) => {}}
-          pagination={{ ...pagination, onPageChange: (p) => dispatch(fetchUsers({ ...filters, page: p })) }}
-        />
-      </div>
-      <ImportUsersModal isOpen={showImport} onClose={() => setShowImport(false)}
-                        onSuccess={() => dispatch(fetchUsers(filters))} />
     </div>
   );
-}
+};
+
+export default UsersListPage;

@@ -1,32 +1,40 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import PageHeader from '@/components/layout/PageHeader';
-import UserForm   from '../components/UserForm';
-import userService from '../services/userService';
-import useToast   from '@/hooks/useToast';
-import ROUTES     from '@/constants/routes';
+import PageHeader from '../../../components/layout/PageHeader';
+import UserForm from '../components/UserForm';
+import { useDispatch } from 'react-redux';
+import { createUser } from '../store/usersSlice';
+import { useToast } from '../../../hooks/useToast';
 
-export default function CreateUserPage() {
+const CreateUserPage = () => {
   const navigate = useNavigate();
-  const toast    = useToast();
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { showToast } = useToast();
 
-  const handleCreate = async (data) => {
-    setLoading(true);
+  const handleSubmit = async (data) => {
     try {
-      await userService.create(data);
-      toast.success('User created successfully');
-      navigate(ROUTES.USERS);
-    } catch { toast.error('Failed to create user'); }
-    finally { setLoading(false); }
+      await dispatch(createUser(data)).unwrap();
+      showToast('تم إضافة المستخدم بنجاح', 'success');
+      navigate('/users');
+    } catch (error) {
+      showToast('حدث خطأ أثناء إضافة المستخدم', 'error');
+    }
   };
 
   return (
     <div>
-      <PageHeader title="Create User" breadcrumbs={['Dashboard', 'Users', 'Create']} />
-      <div className="card max-w-2xl">
-        <UserForm onSubmit={handleCreate} loading={loading} />
+      <PageHeader
+        title="إضافة مستخدم جديد"
+        breadcrumbs={[
+          { label: 'المستخدمون', path: '/users' },
+          { label: 'إضافة جديد' }
+        ]}
+      />
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <UserForm onSubmit={handleSubmit} />
       </div>
     </div>
   );
-}
+};
+
+export default CreateUserPage;
