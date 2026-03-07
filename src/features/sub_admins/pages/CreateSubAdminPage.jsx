@@ -1,13 +1,9 @@
 import PageHeader from '../../../components/layout/PageHeader';
-import SubAdminForm from '../components/SubAdminForm';
 
 const CreateSubAdminPage = () => {
   return (
-    <div>
-      <PageHeader title="إضافة مشرف جديد" />
-      <div className="bg-white rounded-lg shadow p-6">
-        <SubAdminForm />
-      </div>
+    <div className="space-y-6">
+      <PageHeader title="Create Sub Admin" subtitle="Create and assign scoped admin permissions." />
     </div>
   );
 };

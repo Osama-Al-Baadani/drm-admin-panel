@@ -1,33 +1,38 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import documentService from '../services/documentService';
+import { createSlice } from '@reduxjs/toolkit';
 
-export const fetchDocuments = createAsyncThunk('documents/fetchAll', async (params) => {
-  return await documentService.getAll(params);
-});
+const initialState = {
+  list: [],
+  selectedDocument: null,
+  loading: false,
+  error: null,
+};
 
 const documentsSlice = createSlice({
   name: 'documents',
-  initialState: {
-    list: [],
-    selectedDocument: null,
-    loading: false,
-    error: null
+  initialState,
+  reducers: {
+    setDocuments: (state, action) => {
+      state.list = action.payload;
+    },
+    setSelectedDocument: (state, action) => {
+      state.selectedDocument = action.payload;
+    },
+    setDocumentsLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    setDocumentsError: (state, action) => {
+      state.error = action.payload;
+    },
+    resetDocumentsState: () => initialState,
   },
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(fetchDocuments.pending, (state) => {
-        state.loading = true;
-      })
-      .addCase(fetchDocuments.fulfilled, (state, action) => {
-        state.loading = false;
-        state.list = action.payload.data || [];
-      })
-      .addCase(fetchDocuments.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
-  }
 });
+
+export const {
+  setDocuments,
+  setSelectedDocument,
+  setDocumentsLoading,
+  setDocumentsError,
+  resetDocumentsState,
+} = documentsSlice.actions;
 
 export default documentsSlice.reducer;
