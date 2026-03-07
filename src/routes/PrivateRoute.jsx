@@ -1,10 +1,14 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import useAuth from '@/hooks/useAuth';
-import ROUTES  from '@/constants/routes';
-import LoadingSpinner from '@/components/common/LoadingSpinner';
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
-export default function PrivateRoute() {
-  const { isAuthenticated, loading } = useAuth();
-  if (loading) return <LoadingSpinner className="min-h-screen" />;
-  return isAuthenticated ? <Outlet /> : <Navigate to={ROUTES.LOGIN} replace />;
-}
+const PrivateRoute = ({ children }) => {
+  const { user, token } = useAuth();
+
+  if (!token || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
+export default PrivateRoute;

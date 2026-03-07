@@ -1,31 +1,38 @@
-import { useEffect, useState } from 'react';
-import PageHeader from '@/components/layout/PageHeader';
-import DashboardStats    from '../components/DashboardStats';
-import DashboardPieCharts from '../components/DashboardPieCharts';
-import RecentActivity    from '../components/RecentActivity';
-import QuickActions      from '../components/QuickActions';
-import dashboardService  from '../services/dashboardService';
+import PageHeader from '../../../components/layout/PageHeader';
+import StatsCard from '../../../components/charts/StatsCard';
+import PieChart from '../../../components/charts/PieChart';
+import BarChart from '../../../components/charts/BarChart';
 
-export default function DashboardPage() {
-  const [stats,      setStats]      = useState({});
-  const [activities, setActivities] = useState([]);
-  const [loading,    setLoading]    = useState(true);
+const DashboardPage = () => {
+  const stats = [
+    { title: 'إجمالي المستخدمين', value: '1,234', icon: '👥', color: 'blue', change: 12 },
+    { title: 'إجمالي الملفات', value: '567', icon: '📁', color: 'green', change: 8 },
+    { title: 'إجمالي المشاهدات', value: '45.2K', icon: '👁️', color: 'purple', change: -3 },
+    { title: 'المستخدمون النشطون', value: '892', icon: '✅', color: 'yellow', change: 5 }
+  ];
 
-  useEffect(() => {
-    Promise.all([dashboardService.getStats(), dashboardService.getRecentActivity()])
-      .then(([s, a]) => { setStats(s); setActivities(a); })
-      .finally(() => setLoading(false));
-  }, []);
+  const statusData = [
+    { label: 'نشط', value: 892, color: 'bg-green-500' },
+    { label: 'معلق', value: 124, color: 'bg-red-500' },
+    { label: 'منتهي', value: 218, color: 'bg-gray-500' }
+  ];
 
   return (
     <div>
-      <PageHeader title="Dashboard" subtitle="Overview of your DRM system" />
-      <DashboardStats stats={stats} />
-      <DashboardPieCharts stats={stats} />
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <RecentActivity activities={activities} />
-        <QuickActions />
+      <PageHeader title="لوحة التحكم" />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {stats.map((stat, index) => (
+          <StatsCard key={index} {...stat} />
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <PieChart data={statusData} title="حالة المستخدمين" />
+        <BarChart data={statusData} title="إحصائيات المستخدمين" />
       </div>
     </div>
   );
-}
+};
+
+export default DashboardPage;

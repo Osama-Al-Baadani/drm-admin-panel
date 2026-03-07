@@ -1,8 +1,14 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import useAuth from '@/hooks/useAuth';
-import ROUTES  from '@/constants/routes';
+import { Navigate } from 'react-router-dom';
+import { usePermissions } from '../hooks/usePermissions';
 
-export default function RoleRoute({ allowed = [] }) {
-  const { role } = useAuth();
-  return allowed.includes(role) ? <Outlet /> : <Navigate to={ROUTES.DASHBOARD} replace />;
-}
+const RoleRoute = ({ children, requiredPermission }) => {
+  const { hasPermission } = usePermissions();
+
+  if (!hasPermission(requiredPermission)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+export default RoleRoute;
